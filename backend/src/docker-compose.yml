@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: lilu123
+      POSTGRES_USER: JAZZ
+      POSTGRES_DB: FILES
+    ports:
+      - 5448:5432
+    volumes:
+      - db_data:/var/lib/postgresql/db_data
+volumes:
+    db_data:
+    
+      
+
+
+
+
+
+
+  

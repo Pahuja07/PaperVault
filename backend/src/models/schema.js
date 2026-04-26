@@ -1,0 +1,5 @@
+export { departmentsTable } from './department.model.js'
+export { subjectsTable } from './subject.model.js'
+export { usersTable, roleEnum } from './user.model.js'
+export { papersTable, examtypeEnum, difficultyEnum } from './paper.model.js'
+export { predictionsTable, questionBankTable, topicMasteryTable, predictionFeedbackTable } from './prediction.model.js'
