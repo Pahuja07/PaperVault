@@ -7,7 +7,8 @@ import {
   getCommonSubjectPredictions,
   ratePrediction,
   getTopicAnalysis,
-  getSKITInfo
+  getSKITInfo,
+  forwardChatToWebhook
 } from '../controllers/ai.controller.js'
 
 import { authenticatedMiddleware, ensureAuthenticated } from '../middlewares/user.middleware.js'
@@ -29,5 +30,8 @@ router.get('/topic-analysis', getTopicAnalysis)
 
 // Get SKIT branches and common subjects information
 router.get('/skit-info', getSKITInfo)
+
+// Chatbot message webhook forwarding
+router.post('/chatbot', forwardChatToWebhook)
 
 export default router
