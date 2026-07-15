@@ -10,6 +10,7 @@ import OpenAI from 'openai'
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
+const chatbotWebhookUrl = process.env.CHATBOT_WEBHOOK_URL || 'http://localhost:5678/webhook-test/7a14e7f8-a8a3-4eb6-89af-e9696daaf2bb'
 
 // SKIT Common Subjects (First year common for all branches)
 export const skitCommonSubjects = [
@@ -467,5 +468,42 @@ export const getSKITInfo = async (req, res) => {
   } catch (error) {
     console.error('Get SKIT info error:', error)
     return res.status(500).json({ error: 'Failed to get SKIT info' })
+  }
+}
+
+// Forward chatbot messages to n8n webhook
+export const forwardChatToWebhook = async (req, res) => {
+  try {
+    if (!req.body || typeof req.body !== 'object' || !req.body.message) {
+      return res.status(400).json({ error: 'message is required in request body' })
+    }
+
+    const webhookResponse = await fetch(chatbotWebhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ...req.body,
+        source: 'chatbot',
+        receivedAt: new Date().toISOString()
+      })
+    })
+
+    if (!webhookResponse.ok) {
+      const webhookError = await webhookResponse.text()
+      return res.status(502).json({
+        error: 'Failed to send chat data to n8n webhook',
+        details: webhookError || `Webhook responded with status ${webhookResponse.status}`
+      })
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Chat data sent to webhook'
+    })
+  } catch (error) {
+    console.error('Forward chatbot webhook error:', error)
+    return res.status(500).json({ error: 'Failed to process chatbot webhook forwarding' })
   }
 }
